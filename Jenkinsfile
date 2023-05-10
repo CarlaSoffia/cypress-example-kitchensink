@@ -9,9 +9,9 @@ pipeline {
           choice(name: 'BROWSER', choices:['electron', 'chrome', 'edge', 'firefox'], description: "Select the browser to be used in your cypress tests")
       }
 
-      options {
+      /*options {
               ansiColor('xterm')
-      }
+      }*/
 
       stages {
         stage('Build/Deploy app to staging') {
