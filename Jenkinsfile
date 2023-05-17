@@ -25,7 +25,7 @@ pipeline {
                                     cleanRemote: false,
                                     excludes: 'node_modules/',
                                     execCommand: '''
-                                    cd cypress-example-kitchensink
+                                    cd /usr/share/nginx/html
                                     npm i
                                     pm2 restart start''',
                                     execTimeout: 1200000,
