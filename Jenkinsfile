@@ -5,7 +5,7 @@ pipeline {
 
 
       parameters{
-          string(name: 'SPEC', defaultValue:"cypress/integration/1-getting-started/todo.spec.js", description: "Enter the cypress script path that you want to execute")
+          string(name: 'SPEC', defaultValue:"cypress/e2e/1-getting-started/todo.cy.js", description: "Enter the cypress script path that you want to execute")
           choice(name: 'BROWSER', choices:['electron', 'chrome', 'edge', 'firefox'], description: "Select the browser to be used in your cypress tests")
       }
       // HERE - n funciona este ansiColo
@@ -27,7 +27,7 @@ pipeline {
                                     execCommand: '''
                                     cd /usr/share/nginx/html
                                     npm i
-                                    pm2 restart todoApp -- start''',
+                                    pm2 restart todoApp start''',
                                     execTimeout: 1200000,
                                     flatten: false,
                                     makeEmptyDirs: false,
