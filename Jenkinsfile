@@ -27,7 +27,7 @@ pipeline {
                                     execCommand: '''
                                     cd /usr/share/nginx/html
                                     npm i
-                                    pm2 restart npm -- start''',
+                                    pm2 restart todoApp -- start''',
                                     execTimeout: 1200000,
                                     flatten: false,
                                     makeEmptyDirs: false,
