@@ -27,7 +27,7 @@ pipeline {
                             transfers: [
                                 sshTransfer(
                                     cleanRemote: false,
-                                    excludes: 'node_modules/,cypress/,**/*.yml',
+                                    excludes: '.scannerwork/,node_modules/,cypress/,**/*.yml',
                                     execCommand: '''
                                     cd /usr/share/nginx/html
                                     npm i
