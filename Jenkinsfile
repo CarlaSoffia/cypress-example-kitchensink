@@ -7,6 +7,10 @@ pipeline {
       parameters{
           string(name: 'SPEC', defaultValue:"cypress/e2e/1-getting-started/todo.cy.js", description: "Enter the cypress script path that you want to execute")
           choice(name: 'BROWSER', choices:['electron', 'chrome', 'edge', 'firefox'], description: "Select the browser to be used in your cypress tests")
+          booleanParam(name: 'skip_build', defaultValue: true, description: 'Set to true to skip the build stage')
+          booleanParam(name: 'skip_test', defaultValue: true, description: 'Set to true to skip the test stage')
+          booleanParam(name: 'skip_sonar', defaultValue: true, description: 'Set to true to skip the SonarQube stage')
+          booleanParam(name: 'skip_jmeter', defaultValue: false, description: 'Set to true to skip the SonarQube stage')
       }
       options {
               ansiColor('xterm')
@@ -14,6 +18,7 @@ pipeline {
 
       stages {
         stage('Build/Deploy app to staging') {
+            when { expression { params.skip_build != true } }
             steps {
                 sshPublisher(
                     publishers: [
@@ -22,7 +27,7 @@ pipeline {
                             transfers: [
                                 sshTransfer(
                                     cleanRemote: false,
-                                    excludes: 'node_modules/',
+                                    excludes: 'node_modules/,cypress/,**/*.yml',
                                     execCommand: '''
                                     cd /usr/share/nginx/html
                                     npm i
@@ -42,6 +47,7 @@ pipeline {
             }
         }
         stage('Run automated tests'){
+            when { expression { params.skip_test != true } }
             steps {
                 sh 'npm prune'
                 sh 'npm cache clean --force'
@@ -65,6 +71,7 @@ pipeline {
             }
         }
         stage('SonarQube analysis') {
+          when { expression { params.skip_sonar != true } }
           steps {
             script {
                       scannerHome = tool 'sonar-scanner';
@@ -76,6 +83,7 @@ pipeline {
         }
 
         stage("Quality Gate") {
+            when { expression { params.skip_sonar != true } }
             steps {
                 timeout(time: 1, unit: 'HOURS') {
                     // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
@@ -93,7 +101,7 @@ pipeline {
                     def jmeterHome = '/usr/share/jmeter'
 
                     // Path to the JMeter test script
-                    def jmeterScript = './jenkins.io.jmx'
+                    def jmeterScript = './jenkins_io.jmx'
 
                     // Execute JMeter test
                     sh "${jmeterHome}/bin/jmeter -n -t ${jmeterScript} -l result.jtl"
